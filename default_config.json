@@ -1,0 +1,199 @@
+{
+  "parser_name": "Реестр ячеек",
+  "version": "1.3",
+  "csv_columns": [
+    "яч",
+    "ном",
+    "фио/орг",
+    "кад",
+    "адр",
+    "dok"
+  ],
+  "max_distance": 1,
+  "require_first_char": true,
+  "stop_words": [
+    "дома",
+    "дому",
+    "доме",
+    "домов",
+    "домик",
+    "домище"
+  ],
+  "log_suspicious": true,
+  "debug_logging": false,
+  "record_detection": {
+    "mode": "trigger",
+    "trigger": "яч",
+    "continuation_heuristics": {
+      "detect_by": "has_letter | starts_upper",
+      "max_tokens_to_check": 5
+    }
+  },
+  "triggers": {
+    "яч": {
+      "aliases": [
+        "яч"
+      ],
+      "search_mode": "fuzzy",
+      "on_new_record": true,
+      "normalization": {
+        "pipeline": [
+          "strip",
+          "digits_only"
+        ]
+      },
+      "collector": {
+        "token_rule": "any",
+        "max_tokens": 1
+      },
+      "csv_column": "яч"
+    },
+    "ном": {
+      "aliases": [
+        "ном",
+        "номер"
+      ],
+      "search_mode": "fuzzy",
+      "normalization": {
+        "pipeline": [
+          "strip",
+          "remove_trailing_dot",
+          "replace_char:internal:.->/"
+        ]
+      },
+      "collector": {
+        "token_rule": "any",
+        "max_tokens": 1
+      },
+      "csv_column": "ном"
+    },
+    "фио": {
+      "aliases": [
+        "фио"
+      ],
+      "search_mode": "fuzzy",
+      "normalization": {
+        "pipeline": [
+          "strip",
+          "remove_dots",
+          "collapse_spaces"
+        ]
+      },
+      "validation": {
+        "rule": "word_count:2,3",
+        "error_code": "errFIO2"
+      },
+      "heuristics": {
+        "if_missing_after": "ном",
+        "detect_by": "starts_upper",
+        "token_rule": "starts_upper",
+        "error_code": "errFIO1",
+        "priority": 10
+      },
+      "collector": {
+        "token_rule": "starts_upper",
+        "max_tokens": 3
+      },
+      "csv_column": "фио/орг"
+    },
+    "орг": {
+      "aliases": [
+        "орг",
+        "организация"
+      ],
+      "search_mode": "fuzzy",
+      "normalization": {
+        "pipeline": [
+          "strip",
+          "remove_trailing_dot",
+          "collapse_spaces"
+        ]
+      },
+      "heuristics": {
+        "if_missing_after": "ном",
+        "unless": "starts_upper | looks_like_number_colon_dot",
+        "detect_by": "any",
+        "error_code": "errORG1",
+        "priority": 20
+      },
+      "csv_column": "фио/орг"
+    },
+    "кад": {
+      "aliases": [
+        "кад",
+        "кадастр",
+        "кн",
+        "када"
+      ],
+      "search_mode": "fuzzy",
+      "multi_token": {
+        "enabled": true,
+        "token_rule": "is_part_of_number_colon_dot"
+      },
+      "normalization": {
+        "pipeline": [
+          "strip",
+          "remove_trailing_dot",
+          "replace_char:.->:",
+          "uppercase",
+          "remove_spaces"
+        ]
+      },
+      "validation": {
+        "rule": "regex:^[0-9А-ЯЁ:]+$",
+        "error_code": "errKAD2"
+      },
+      "csv_column": "кад"
+    },
+    "адр": {
+      "aliases": [
+        "адр",
+        "адрес"
+      ],
+      "search_mode": "fuzzy",
+      "normalization": {
+        "pipeline": [
+          "strip",
+          "replace_dot_before_keywords:улица,дом,квартира,дробь,строение,город,область,край,республика,район,проспект,бульвар,переулок,площадь,шоссе,набережная,тупик",
+          "replace_dot_after_keywords:улица,дом,квартира,дробь,строение,город,область,край,республика,район,проспект,бульвар,переулок,площадь,шоссе,набережная,тупик",
+          "replace_space_before_keywords:улица,дом,квартира,дробь,строение,проспект,бульвар,переулок,площадь,шоссе,набережная,тупик",
+          "remove_dots",
+          "collapse_spaces"
+        ]
+      },
+      "heuristics": {
+        "if_missing_after": "кад",
+        "detect_by": "has_letter",
+        "error_code": "errADR1",
+        "priority": 30
+      },
+      "csv_column": "адр"
+    },
+    "dok": {
+      "aliases": [
+        "dok",
+        "doc",
+        "доку",
+        "документ",
+        "дока"
+      ],
+      "search_mode": "fuzzy",
+      "normalization": {
+        "pipeline": [
+          "strip",
+          "apply_replacements",
+          "collapse_spaces"
+        ]
+      },
+      "replacements": {
+        "Выписка и ГРН": "Выписка ЕГРН",
+        "Акт приема и передачи": "Акт приема - передачи",
+        "Ак приема и передачи": "Акт приема - передачи"
+      },
+      "csv_column": "dok"
+    }
+  },
+  "tokenizer": {
+    "split_by": "whitespace"
+  }
+}
