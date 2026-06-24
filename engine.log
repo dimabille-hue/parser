@@ -1,0 +1,15 @@
+2026-06-11 09:07:59  INFO     Конфигурация загружена из default_config.json
+2026-06-11 09:07:59  INFO     Сервер запущен: http://localhost:8000
+2026-06-11 09:08:05  DEBUG    HTTP "GET / HTTP/1.1" 200 -
+2026-06-11 09:08:05  DEBUG    HTTP "POST /validate_config HTTP/1.1" 200 -
+2026-06-11 09:08:21  INFO     Анализ: 1 файл(ов), debug=False
+2026-06-11 09:08:21  DEBUG    Файл 'text1.txt': кодировка utf-8-sig
+2026-06-11 09:08:21  INFO     Файл 'text1.txt': распознано 10 записей
+2026-06-11 09:08:21  DEBUG    openpyxl не установлен, XLSX недоступен
+2026-06-11 09:08:21  DEBUG    HTTP "POST /analyze HTTP/1.1" 200 -
+2026-06-11 09:08:22  DEBUG    HTTP "POST /validate_config HTTP/1.1" 200 -
+2026-06-11 09:08:31  DEBUG    HTTP "GET /download/45ee986c1ace?fmt=csv HTTP/1.1" 200 -
+2026-06-11 09:09:59  DEBUG    HTTP "GET /docs HTTP/1.1" 200 -
+2026-06-11 09:10:18  DEBUG    HTTP "GET / HTTP/1.1" 200 -
+2026-06-11 09:10:18  DEBUG    HTTP "POST /validate_config HTTP/1.1" 200 -
+2026-06-11 09:50:59  INFO     Сервер остановлен
